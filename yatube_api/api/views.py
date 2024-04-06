@@ -1,7 +1,9 @@
 from django.shortcuts import get_object_or_404
-from posts.models import Group, Post
+from posts.models import Group, Post, Comment
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import ListModelMixin, CreateModelMixin
 
 from .permissions import IsOwnerOrReadOnly
 from .serializers import CommentSerializer, GroupSerializer, PostSerializer
@@ -21,13 +23,14 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GroupSerializer
 
 
-class CommentViewSet(viewsets.ModelViewSet):
+class CommentViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
     def get_queryset(self):
         post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
-        return post.comments
+        return post.comments.all()
 
     def perform_create(self, serializer):
         post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
