@@ -20,6 +20,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
+
 '''
 Дмитрий, здравствуйте!
 Написал вам в пачке по поводу данного задания, но ответа так и не получил.
